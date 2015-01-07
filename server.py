@@ -38,28 +38,15 @@ def iphost():
     hostname=lookup(request.remote_addr)[0]
     return request.remote_addr + " - " + hostname + "\n"
 
+@app.route('/ip')
+def ip():
+    return request.remote_addr + "\n"
 
 @app.route('/host')
 def host():
     hostname=lookup(request.remote_addr)[0]
     return hostname + "\n"
 
-@app.route('/help')
-def help():
-    f=open('/home/pronto/python/templates/main.html', 'r')
-    out = f.read()
-    start = out.find('Fea')
-    end =  out.find('<!--')
-    return out[start:end]
-
-@app.route('/freedooooom')
-def freedom():
-    return render_template('freedom.html')
-
-@app.route('/robots.txt')
-def robots():
-    return render_template('robots.txt')
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port='10112')
+    app.run(host='127.0.0.1',port='10112')
 
