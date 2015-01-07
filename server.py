@@ -17,8 +17,10 @@ def main():
     agent=str(request.user_agent)
     if "curl" in agent:
         return request.remote_addr + "\n"
-    elif "PowerShell" in agent:
+    elif "Wget" in agent:
         return request.remote_addr + "\n"
+    elif "PowerShell" in agent:
+        return request.remote_addr + "\n"        
     else:
         hostname = lookup(ip)[0]
         return render_template('main.html', 
@@ -58,12 +60,6 @@ def freedom():
 def robots():
     return render_template('robots.txt')
 
-@app.route('/ping')
-def ping():
-    return render_template('ping.html')
-
-
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',port='10112')
 
