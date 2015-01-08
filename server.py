@@ -10,24 +10,23 @@ def lookup(addr):
     except socket.herror:
         return "No dns record for host", "No dns record for host", "No dns record for host"
 
-
 @app.route('/')
 def main():
-    ip=request.remote_addr
+    ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
     agent=str(request.user_agent)
     if "curl" in agent:
-        return request.remote_addr + "\n"
-    elif "Wget" in agent:
-        return request.remote_addr + "\n"
+        return ip + "\n"
     elif "PowerShell" in agent:
-        return request.remote_addr + "\n"        
+        return ip + "\n"
+    elif "Wget" in agent:
+	return ip + "\n"
     else:
         hostname = lookup(ip)[0]
         return render_template('main.html', 
-                ip=request.remote_addr, 
-                hostname=hostname , 
+                ip=ip, 
+                hostname=hostname, 
                 agent=agent,
-                lang=request.accept_languages ,
+                lang=request.accept_languages,
                 enco=request.accept_encodings,
                 xip=request.access_route[0]
                 )
@@ -35,18 +34,23 @@ def main():
     
 @app.route('/ip.host')
 def iphost():
-    hostname=lookup(request.remote_addr)[0]
-    return request.remote_addr + " - " + hostname + "\n"
+    ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    hostname=lookup(ip)[0]
+    return ip + " - " + hostname + "\n"
 
 @app.route('/ip')
 def ip():
-    return request.remote_addr + "\n"
+    ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    return ip + "\n"
+
 
 @app.route('/host')
 def host():
-    hostname=lookup(request.remote_addr)[0]
+    ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    hostname = lookup(ip)[0]
     return hostname + "\n"
 
+
 if __name__ == '__main__':
-    app.run(host='127.0.0.1',port='10112')
+    app.run(host='127.0.0.1',port='5000')
 
