@@ -1,9 +1,13 @@
 from flask import Flask, render_template, send_from_directory, request
-import os, socket, time, re
+import os, socket, time, re, logging
+
 socket.setdefaulttimeout(3)
 
 app = Flask(__name__)
 app.debug=False
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.CRITICAL)
+
 def lookup(addr):
     try:
         return socket.gethostbyaddr(addr)
@@ -19,7 +23,7 @@ def main():
     elif "PowerShell" in agent:
         return ip + "\n"
     elif "Wget" in agent:
-	return ip + "\n"
+        return ip + "\n"
     else:
         hostname = lookup(ip)[0]
         return render_template('main.html', 
@@ -52,5 +56,4 @@ def host():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1',port='5000')
-
+    app.run(host='127.0.0.1')
